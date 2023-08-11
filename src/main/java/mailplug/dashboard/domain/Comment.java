@@ -16,12 +16,23 @@ public class Comment {
     private Long commentId;
 
     @JoinColumn(name = "writerId")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Writer writer;
 
-    @Column(nullable = false)
+    @JoinColumn(name = "postId")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Post post;
+
+    @Column
     private String contents;
+
+    public Comment(Writer writer, Post post, String contents) {
+        this.writer = writer;
+        this.post = post;
+        this.contents = contents;
+    }
 
 
 }

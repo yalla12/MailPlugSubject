@@ -21,12 +21,12 @@ public class Post {
     private String title;
 
     @JoinColumn(name = "boardId")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Board board;
 
     @JoinColumn(name = "writer_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Writer writer;
 
@@ -41,6 +41,10 @@ public class Post {
         this.board = board;
         this.writer = writer;
         this.contents = contents;
+    }
 
+    public void updatePost(String title, String contents) {
+        this.title = title;
+        this.contents = contents;
     }
 }

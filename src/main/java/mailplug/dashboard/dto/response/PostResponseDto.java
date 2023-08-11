@@ -17,22 +17,16 @@ public class PostResponseDto {
    private String contents;
    private Date createdDateTime;
    private int commentsCount;
+
+   public PostResponseDto(Long postId, String title, Long boardId, String boardDisplayName, Writer writer, String contents, Date createdDateTime, int commentsCount) {
+      this.postId = postId;
+      this.title = title;
+      this.boardId = boardId;
+      this.boardDisplayName = boardDisplayName;
+      this.writer = writer;
+      this.contents = contents;
+      this.createdDateTime = createdDateTime;
+      this.commentsCount = commentsCount;
+   }
 }
 
-
-/*
-"value": [
-        {
-            "postId": 1593171,
-            "title": "test",
-            "boardId": 28478,
-            "boardDisplayName": "테스트 게시판",
-            "writer": {
-                "displayName": "홍길동"
-            },
-            "contents": "",
-            "createdDateTime": "2023-06-30T06:15:08Z",
-            "commentsCount": 0
-        }
-    ],
- */
