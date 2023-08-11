@@ -23,10 +23,7 @@ public class Post {
     @JoinColumn(name = "boardId")
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Board boardId;
-
-    @Column(nullable = false)
-    private String boardDisplayName;
+    private Board board;
 
     @JoinColumn(name = "writer_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,5 +36,11 @@ public class Post {
     @Column(nullable = false)
     private int commentsCount;
 
+    public Post(String title, Board board, Writer writer, String contents ) {
+        this.title = title;
+        this.board = board;
+        this.writer = writer;
+        this.contents = contents;
 
+    }
 }

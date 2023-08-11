@@ -32,4 +32,9 @@ public class Board {
         this. boardType = boardType;
         this.isFavorite = false;
     }
+
+    public void updateBoard(String displayName, String boardType) {
+        this.displayName = displayName;
+        this.boardType = boardType;
+    }
 }

@@ -2,11 +2,15 @@ package mailplug.dashboard.service;
 
 import lombok.RequiredArgsConstructor;
 import mailplug.dashboard.domain.Board;
+import mailplug.dashboard.dto.ErrorCode;
 import mailplug.dashboard.dto.request.BoardRequestDto;
+import mailplug.dashboard.dto.response.BoardResponseDto;
 import mailplug.dashboard.dto.response.ResponseDto;
 import mailplug.dashboard.repository.BoardRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -15,14 +19,62 @@ public class BoardService {
     private final BoardRepository boardRepository;
 
     /**
-     *  게시판 생성
-     * */
+     * 게시판 생성
+     * @param boardRequestDto
+     * @return
+     */
     @Transactional
     public ResponseDto<?> createBoard(BoardRequestDto boardRequestDto) {
 
-        Board board = new Board(boardRequestDto.getDisplayName(), boardRequestDto.getDisplayName());
+        Board board = new Board(boardRequestDto.getDisplayName(), boardRequestDto.getBoardType());
         boardRepository.save(board);
 
         return ResponseDto.success(board);
     }
-}
+
+    /**
+     * 게시판 조회
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public ResponseDto<?> findBoard() {
+        List<Board> board = boardRepository.findAll();
+
+        return ResponseDto.success(board);
+
+    }
+
+    /**
+     * 게시판 수정
+     * @param boardId
+     * @param boardRequestDto
+     * @return
+     */
+    @Transactional
+    public ResponseDto<?> updateBoard(Long boardId, BoardRequestDto boardRequestDto) {
+        Board board = boardRepository.findById(boardId).orElse(null);
+        if(board == null) return ResponseDto.fail(ErrorCode.NOT_FOUND);
+
+        board.updateBoard(boardRequestDto.getDisplayName(), boardRequestDto.getBoardType());
+        boardRepository.save(board);
+
+        return ResponseDto.success(board);
+    }
+
+    /**
+     * 게시판 삭제
+     * @param boardId
+     * @return
+     */
+    @Transactional
+    public ResponseDto<?> deleteBoard(Long boardId) {
+        Board board = boardRepository.findById(boardId).orElse(null);
+        if(board == null) return ResponseDto.fail(ErrorCode.NOT_FOUND);
+
+        boardRepository.delete(board);
+
+        return ResponseDto.success(board);
+    }
+ }
+
+
