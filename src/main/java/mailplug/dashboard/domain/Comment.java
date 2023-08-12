@@ -25,7 +25,7 @@ public class Comment extends Timestamped {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
 
-    @Column
+    @Column(nullable = false)
     private String contents;
 
     public Comment(Writer writer, Post post, String contents) {

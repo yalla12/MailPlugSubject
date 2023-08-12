@@ -7,11 +7,15 @@ import mailplug.dashboard.domain.Writer;
 import mailplug.dashboard.dto.ErrorCode;
 import mailplug.dashboard.dto.request.CommentUpdateRequestDto;
 import mailplug.dashboard.dto.response.CommentResponseDto;
+import mailplug.dashboard.dto.response.PageInfo;
 import mailplug.dashboard.dto.response.ResponseDto;
 import mailplug.dashboard.repository.CommentRepository;
 import mailplug.dashboard.dto.request.CommentRequestDto;
 import mailplug.dashboard.repository.PostRepository;
 import mailplug.dashboard.repository.WriterRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,10 +39,10 @@ public class CommentService {
     @Transactional
     public ResponseDto<?> createComment(Long postId, CommentRequestDto commentRequestDto) {
         Post post = postRepository.findById(postId).orElse(null);
-        if(post == null) return ResponseDto.fail(ErrorCode.NOT_FOUND);
+        if(post == null) return ResponseDto.fail(ErrorCode.NOT_FOUNT_POST);
 
         Writer writer = writerRepository.findByDisplayName(commentRequestDto.getDisplayName()).orElse(null);
-        if(writer == null) return ResponseDto.fail(ErrorCode.NOT_FOUND);
+        if(writer == null) return ResponseDto.fail(ErrorCode.NOT_FOUND_WRITER);
 
         Comment comment = new Comment(writer, post, commentRequestDto.getContents());
         commentRepository.save(comment);
@@ -52,20 +56,26 @@ public class CommentService {
 
     /**
      * 댓글 목록 조회
+     * @param offset
+     * @param limit
      * @return
      */
     @Transactional(readOnly = true)
-    public ResponseDto<?> findAllComment() {
-        List<Comment> commentList = commentRepository.findAll();
+    public ResponseDto<?> findAllComment(int offset, int limit) {
+
+        Pageable pageable = PageRequest.of(offset, limit);
+        Page<Comment> commentPageList = commentRepository.findAll(pageable);
 
         List<CommentResponseDto> commentResponseDtos = new ArrayList<>();
 
-        for(Comment comment : commentList) {
+        for(Comment comment : commentPageList) {
             CommentResponseDto commentResponseDto = new CommentResponseDto(comment.getCommentId(), comment.getWriter(), comment.getContents(), comment.getCreatedDateTime());
             commentResponseDtos.add(commentResponseDto);
         }
 
-        return ResponseDto.success(commentResponseDtos);
+        PageInfo pageInfo = new PageInfo(commentResponseDtos.size(), offset, limit, commentResponseDtos.size());
+
+        return ResponseDto.findSuccess(commentResponseDtos, pageInfo);
     }
 
     /**
@@ -76,7 +86,7 @@ public class CommentService {
     @Transactional(readOnly = true)
     public ResponseDto<?> findComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElse(null);
-        if(comment == null) return ResponseDto.fail(ErrorCode.NOT_FOUND);
+        if(comment == null) return ResponseDto.fail(ErrorCode.NOT_FOUNT_COMMENT);
 
         CommentResponseDto commentResponseDto = new CommentResponseDto(comment.getCommentId(), comment.getWriter(), comment.getContents(), comment.getCreatedDateTime());
 
@@ -92,7 +102,7 @@ public class CommentService {
     @Transactional
     public ResponseDto<?> updateComment(Long commentId, CommentUpdateRequestDto commentUpdateRequestDto) {
         Comment comment = commentRepository.findById(commentId).orElse(null);
-        if(comment == null) return ResponseDto.fail(ErrorCode.NOT_FOUND);
+        if(comment == null) return ResponseDto.fail(ErrorCode.NOT_FOUNT_COMMENT);
 
         comment.updateComment(commentUpdateRequestDto.getContents());
         commentRepository.save(comment);
@@ -108,7 +118,7 @@ public class CommentService {
     @Transactional
     public ResponseDto<?> deleteComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElse(null);
-        if(comment == null) return ResponseDto.fail(ErrorCode.NOT_FOUND);
+        if(comment == null) return ResponseDto.fail(ErrorCode.NOT_FOUNT_COMMENT);
 
         commentRepository.delete(comment);
 

@@ -5,8 +5,12 @@ import mailplug.dashboard.domain.Board;
 import mailplug.dashboard.dto.ErrorCode;
 import mailplug.dashboard.dto.request.BoardRequestDto;
 import mailplug.dashboard.dto.response.BoardResponseDto;
+import mailplug.dashboard.dto.response.PageInfo;
 import mailplug.dashboard.dto.response.ResponseDto;
 import mailplug.dashboard.repository.BoardRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,19 +41,26 @@ public class BoardService {
 
     /**
      * 게시판 조회
+     * @param offset
+     * @param limit
      * @return
      */
     @Transactional(readOnly = true)
-    public ResponseDto<?> findBoard() {
-        List<Board> boardList = boardRepository.findAll();
+    public ResponseDto<?> findBoard(int offset, int limit) {
+
+        Pageable pageable = PageRequest.of(offset,limit);
+        Page<Board> boardPageList = boardRepository.findAll(pageable);
+
         List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
 
-        for(Board board : boardList) {
+        for(Board board : boardPageList) {
             BoardResponseDto boardResponseDto = new BoardResponseDto(board.getBoardId(), board.getDisplayName(), board.isFavorite(), board.getOrderNo());
             boardResponseDtos.add(boardResponseDto);
         }
 
-        return ResponseDto.success(boardResponseDtos);
+        PageInfo pageInfo = new PageInfo(boardResponseDtos.size(), offset, limit, boardResponseDtos.size());
+
+        return ResponseDto.findSuccess(boardResponseDtos, pageInfo);
 
     }
 
@@ -62,7 +73,7 @@ public class BoardService {
     @Transactional
     public ResponseDto<?> updateBoard(Long boardId, BoardRequestDto boardRequestDto) {
         Board board = boardRepository.findById(boardId).orElse(null);
-        if(board == null) return ResponseDto.fail(ErrorCode.NOT_FOUND);
+        if(board == null) return ResponseDto.fail(ErrorCode.NOT_FOUND_BOARD);
 
         board.updateBoard(boardRequestDto.getDisplayName(), boardRequestDto.getBoardType(), boardRequestDto.getOrderNo());
         boardRepository.save(board);
@@ -78,7 +89,7 @@ public class BoardService {
     @Transactional
     public ResponseDto<?> deleteBoard(Long boardId) {
         Board board = boardRepository.findById(boardId).orElse(null);
-        if(board == null) return ResponseDto.fail(ErrorCode.NOT_FOUND);
+        if(board == null) return ResponseDto.fail(ErrorCode.NOT_FOUND_BOARD);
 
         boardRepository.delete(board);
 

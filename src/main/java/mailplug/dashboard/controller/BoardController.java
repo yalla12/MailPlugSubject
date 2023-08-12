@@ -25,11 +25,13 @@ public class BoardController {
 
     /**
      * 게시판 조회
+     * @param offset
+     * @param limit
      * @return
      */
     @GetMapping("/board/find")
-    public ResponseDto<?> findBoard() {
-        return boardService.findBoard();
+    public ResponseDto<?> findBoard(@RequestParam int offset, @RequestParam int limit) {
+        return boardService.findBoard(offset, limit);
     }
 
     /**
@@ -48,7 +50,7 @@ public class BoardController {
      * @param boardId
      * @return
      */
-    @DeleteMapping("board/delete/{boardId}")
+    @DeleteMapping("/board/delete/{boardId}")
     public ResponseDto<?> deleteBoard(@PathVariable Long boardId) {
         return boardService.deleteBoard(boardId);
     }

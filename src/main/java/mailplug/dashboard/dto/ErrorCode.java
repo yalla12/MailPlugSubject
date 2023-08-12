@@ -6,10 +6,12 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
-    NOT_FOUND(404,"COMMON-ERR-404","PAGE NOT FOUND"),
-    INTER_SERVER_ERROR(500,"COMMON-ERR-500","INTER SERVER ERROR"),
-    NOT_FOUND_MEMBER(500, "MEMBER-ERR-500", "유저를 찾을 수 없습니다."),
-    NOT_FOUNT_POST(500, "POST-ERR-500", "게시물을 찾을 수 없습니다.");
+
+    NOT_FOUND_WRITER(500, "WRITER-ERR-500", "글쓴이를 찾을 수 없습니다."),
+    NOT_FOUND_BOARD(500, "BOARD-ERR-500", "게시판을 찾을 수 없습니다."),
+    NOT_FOUNT_POST(500, "POST-ERR-500", "게시글을 찾을 수 없습니다."),
+    NOT_FOUNT_COMMENT(500, "COMMENT-ERR-500", "댓글을 찾을 수 없습니다.");
+
 
 
     private final int status;

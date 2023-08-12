@@ -27,11 +27,13 @@ public class CommentController {
 
     /**
      * 댓글 목록 조회
+     * @param offset
+     * @param limit
      * @return
      */
     @GetMapping("/comment/findAll")
-    public ResponseDto<?> findALlComment() {
-        return commentService.findAllComment();
+    public ResponseDto<?> findALlComment(@RequestParam int offset, @RequestParam int limit) {
+        return commentService.findAllComment(offset, limit);
     }
 
     /**
@@ -60,7 +62,7 @@ public class CommentController {
      * @param commentId
      * @return
      */
-    @DeleteMapping("comment/delete/{commentId}")
+    @DeleteMapping("/comment/delete/{commentId}")
     public ResponseDto<?> deleteComment(@PathVariable Long commentId) {
         return commentService.deleteComment(commentId);
     }

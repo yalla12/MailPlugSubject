@@ -26,11 +26,13 @@ public class PostController {
 
     /**
      * 게시글 목록 조회
+     * @param offset
+     * @param limit
      * @return
      */
     @GetMapping("/post/findAll")
-    public ResponseDto<?> findAllPost() {
-        return postService.findAllPost();
+    public ResponseDto<?> findAllPost(@RequestParam int offset, @RequestParam int limit) {
+        return postService.findAllPost(offset, limit);
     }
 
     /**

@@ -7,11 +7,15 @@ import mailplug.dashboard.domain.Writer;
 import mailplug.dashboard.dto.ErrorCode;
 import mailplug.dashboard.dto.request.PostRequestDto;
 import mailplug.dashboard.dto.request.PostUpdateRequestDto;
+import mailplug.dashboard.dto.response.PageInfo;
 import mailplug.dashboard.dto.response.PostResponseDto;
 import mailplug.dashboard.dto.response.ResponseDto;
 import mailplug.dashboard.repository.BoardRepository;
 import mailplug.dashboard.repository.PostRepository;
 import mailplug.dashboard.repository.WriterRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,10 +38,10 @@ public class PostService {
      */
     public ResponseDto<?> createPost(Long boardId, PostRequestDto postRequestDto) {
         Board board = boardRepository.findById(boardId).orElse(null);
-        if(board == null) return ResponseDto.fail(ErrorCode.NOT_FOUND);
+        if(board == null) return ResponseDto.fail(ErrorCode.NOT_FOUND_BOARD);
 
         Writer writer = writerRepository.findByDisplayName(postRequestDto.getDisplayName()).orElse(null);
-        if(writer == null) return ResponseDto.fail(ErrorCode.NOT_FOUND);
+        if(writer == null) return ResponseDto.fail(ErrorCode.NOT_FOUND_WRITER);
 
 
         Post post = new Post(postRequestDto.getTitle(), board, writer, postRequestDto.getContents());
@@ -48,15 +52,18 @@ public class PostService {
 
     /**
      * 게시글 목록 조회
+     * @param offset
+     * @param limit
      * @return
      */
     @Transactional(readOnly = true)
-    public ResponseDto<?> findAllPost() {
-        List<Post> postList = postRepository.findAll();
+    public ResponseDto<?> findAllPost(int offset, int limit) {
 
+        Pageable pageable = PageRequest.of(offset, limit);
+        Page<Post> postPageList = postRepository.findAll(pageable) ;
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
 
-        for(Post post : postList) {
+        for(Post post : postPageList) {
             PostResponseDto postResponseDto = new PostResponseDto(post.getPostId(),
                     post.getTitle(),
                     post.getBoard().getBoardId(),
@@ -69,7 +76,10 @@ public class PostService {
             postResponseDtos.add(postResponseDto);
         }
 
-        return ResponseDto.success(postResponseDtos);
+        PageInfo pageInfo = new PageInfo(postResponseDtos.size(), offset, limit, postResponseDtos.size());
+
+
+        return ResponseDto.findSuccess(postResponseDtos, pageInfo);
     }
 
     /**
@@ -80,7 +90,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public ResponseDto<?> findPost(Long postId) {
         Post post = postRepository.findById(postId).orElse(null);
-        if(post == null) return ResponseDto.fail(ErrorCode.NOT_FOUND);
+        if(post == null) return ResponseDto.fail(ErrorCode.NOT_FOUNT_POST);
 
         PostResponseDto postResponseDto = new PostResponseDto(post.getPostId(),
                 post.getTitle(),
@@ -104,7 +114,7 @@ public class PostService {
     @Transactional
     public ResponseDto<?> updatePost(Long postId, PostUpdateRequestDto postUpdateRequestDto) {
         Post post = postRepository.findById(postId).orElse(null);
-        if(post == null) return ResponseDto.fail(ErrorCode.NOT_FOUND);
+        if(post == null) return ResponseDto.fail(ErrorCode.NOT_FOUNT_POST);
 
         post.updatePost(postUpdateRequestDto.getTitle(), postUpdateRequestDto.getContents());
         postRepository.save(post);
@@ -120,7 +130,7 @@ public class PostService {
     @Transactional
     public ResponseDto<?> deletePost(Long postId) {
         Post post = postRepository.findById(postId).orElse(null);
-        if(post == null) return ResponseDto.fail(ErrorCode.NOT_FOUND);
+        if(post == null) return ResponseDto.fail(ErrorCode.NOT_FOUNT_POST);
 
         postRepository.delete(post);
 
@@ -128,9 +138,3 @@ public class PostService {
     }
 }
 
-
-
-/*
-H2 디비 테스트용
-Insert Into WRITER(WRITER_ID, DISPLAY_NAME)  values(1, '홍길동')
- */
