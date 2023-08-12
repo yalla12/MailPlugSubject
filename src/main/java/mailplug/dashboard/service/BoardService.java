@@ -10,6 +10,7 @@ import mailplug.dashboard.repository.BoardRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,7 +27,9 @@ public class BoardService {
     @Transactional
     public ResponseDto<?> createBoard(BoardRequestDto boardRequestDto) {
 
-        Board board = new Board(boardRequestDto.getDisplayName(), boardRequestDto.getBoardType());
+        if(boardRequestDto.getIsFavorite() == null) boardRequestDto.isFavoriteNull();
+
+        Board board = new Board(boardRequestDto.getDisplayName(), boardRequestDto.getBoardType(), boardRequestDto.getOrderNo(), boardRequestDto.getIsFavorite());
         boardRepository.save(board);
 
         return ResponseDto.success(board);
@@ -38,9 +41,15 @@ public class BoardService {
      */
     @Transactional(readOnly = true)
     public ResponseDto<?> findBoard() {
-        List<Board> board = boardRepository.findAll();
+        List<Board> boardList = boardRepository.findAll();
+        List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
 
-        return ResponseDto.success(board);
+        for(Board board : boardList) {
+            BoardResponseDto boardResponseDto = new BoardResponseDto(board.getBoardId(), board.getDisplayName(), board.isFavorite(), board.getOrderNo());
+            boardResponseDtos.add(boardResponseDto);
+        }
+
+        return ResponseDto.success(boardResponseDtos);
 
     }
 
@@ -55,7 +64,7 @@ public class BoardService {
         Board board = boardRepository.findById(boardId).orElse(null);
         if(board == null) return ResponseDto.fail(ErrorCode.NOT_FOUND);
 
-        board.updateBoard(boardRequestDto.getDisplayName(), boardRequestDto.getBoardType());
+        board.updateBoard(boardRequestDto.getDisplayName(), boardRequestDto.getBoardType(), boardRequestDto.getOrderNo());
         boardRepository.save(board);
 
         return ResponseDto.success(board);

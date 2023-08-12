@@ -21,20 +21,22 @@ public class Board {
     @Column(nullable = false)
     private String boardType;
 
-    @Column(nullable = false)
+    @Column
     private boolean isFavorite;
 
-    @Column(nullable = false)
+    @Column
     private int orderNo;
 
-    public Board(String displayName, String boardType) {
-        this.displayName = displayName;
-        this. boardType = boardType;
-        this.isFavorite = false;
-    }
-
-    public void updateBoard(String displayName, String boardType) {
+    public Board(String displayName, String boardType, int orderNo, boolean isFavorite) {
         this.displayName = displayName;
         this.boardType = boardType;
+        this.orderNo = orderNo;
+        this.isFavorite = isFavorite;
+    }
+
+    public void updateBoard(String displayName, String boardType, int orderNo) {
+        this.displayName = displayName;
+        this.boardType = boardType;
+        this.orderNo = orderNo;
     }
 }

@@ -10,6 +10,16 @@ import java.util.List;
 @NoArgsConstructor
 public class BoardResponseDto {
 
-    private List<Board> boardList;
-    
+    private Long boardId;
+    private String displayName;
+    private boolean isFavorite;
+    private int orderNo;
+
+    public BoardResponseDto(Long boardId, String displayName, boolean isFavorite, int orderNo) {
+        this.boardId = boardId;
+        this.displayName = displayName;
+        this.isFavorite = isFavorite;
+        this.orderNo = orderNo;
+    }
+
 }

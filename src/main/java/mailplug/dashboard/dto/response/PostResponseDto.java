@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import mailplug.dashboard.domain.Writer;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -15,10 +16,11 @@ public class PostResponseDto {
    private String boardDisplayName;
    private Writer writer;
    private String contents;
-   private Date createdDateTime;
+   private LocalDateTime createdDateTime;
    private int commentsCount;
 
-   public PostResponseDto(Long postId, String title, Long boardId, String boardDisplayName, Writer writer, String contents, Date createdDateTime, int commentsCount) {
+
+   public PostResponseDto(Long postId, String title, Long boardId, String boardDisplayName, Writer writer, String contents, LocalDateTime createdDateTime,  int commentsCount) {
       this.postId = postId;
       this.title = title;
       this.boardId = boardId;

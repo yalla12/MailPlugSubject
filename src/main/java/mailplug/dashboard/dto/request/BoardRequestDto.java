@@ -9,5 +9,11 @@ public class BoardRequestDto {
 
     private String displayName;
     private String boardType;
+    private int orderNo;
+    private Boolean isFavorite;
+
+    public void isFavoriteNull() {
+        this.isFavorite = false;
+    }
 
 }

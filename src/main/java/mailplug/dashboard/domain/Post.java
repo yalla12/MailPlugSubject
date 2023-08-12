@@ -11,7 +11,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Setter
 @NoArgsConstructor
 @Entity
-public class Post {
+public class Post extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,5 +46,9 @@ public class Post {
     public void updatePost(String title, String contents) {
         this.title = title;
         this.contents = contents;
+    }
+
+    public void commentsCount(int commentsCount) {
+        this.commentsCount = commentsCount;
     }
 }

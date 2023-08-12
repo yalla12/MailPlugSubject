@@ -9,7 +9,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Comment {
+public class Comment extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +31,10 @@ public class Comment {
     public Comment(Writer writer, Post post, String contents) {
         this.writer = writer;
         this.post = post;
+        this.contents = contents;
+    }
+
+    public void updateComment(String contents) {
         this.contents = contents;
     }
 

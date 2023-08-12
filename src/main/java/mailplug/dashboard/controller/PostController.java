@@ -1,7 +1,6 @@
 package mailplug.dashboard.controller;
 
 import lombok.RequiredArgsConstructor;
-import mailplug.dashboard.dto.request.BoardRequestDto;
 import mailplug.dashboard.dto.request.PostRequestDto;
 import mailplug.dashboard.dto.request.PostUpdateRequestDto;
 import mailplug.dashboard.dto.response.ResponseDto;

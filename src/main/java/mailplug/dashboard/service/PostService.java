@@ -5,7 +5,6 @@ import mailplug.dashboard.domain.Board;
 import mailplug.dashboard.domain.Post;
 import mailplug.dashboard.domain.Writer;
 import mailplug.dashboard.dto.ErrorCode;
-import mailplug.dashboard.dto.request.BoardRequestDto;
 import mailplug.dashboard.dto.request.PostRequestDto;
 import mailplug.dashboard.dto.request.PostUpdateRequestDto;
 import mailplug.dashboard.dto.response.PostResponseDto;
@@ -51,6 +50,7 @@ public class PostService {
      * 게시글 목록 조회
      * @return
      */
+    @Transactional(readOnly = true)
     public ResponseDto<?> findAllPost() {
         List<Post> postList = postRepository.findAll();
 
@@ -63,8 +63,8 @@ public class PostService {
                     post.getBoard().getDisplayName(),
                     post.getWriter(),
                     "",
-                    null,
-                    0
+                    post.getCreatedDateTime(),
+                    post.getCommentsCount()
             );
             postResponseDtos.add(postResponseDto);
         }
@@ -88,8 +88,8 @@ public class PostService {
                 post.getBoard().getDisplayName(),
                 post.getWriter(),
                 post.getContents(),
-                null,
-                0
+                post.getCreatedDateTime(),
+                post.getCommentsCount()
         );
 
         return ResponseDto.success(postResponseDto);
