@@ -46,4 +46,4 @@
 | 4         | 글쓴이          |
 | 5         | 신선호          |
 |           |              |
-- API 링크 : https://www.notion.so/f37df07bec9b416c9006d7621091f195?v=484bbd8ee12a4fa88702b96cd29a3ef0&pvs=4
+- API 링크 : https://talented-repair-797.notion.site/f37df07bec9b416c9006d7621091f195?v=484bbd8ee12a4fa88702b96cd29a3ef0&pvs=4
